@@ -17,7 +17,6 @@ hello = simple (fromUt . js "{who: %0}" (String -> JS_IO Ptr))
 
 main : JS_IO ()
 main = render !(divC [ChildElement !(hello "Idris"),
-                      ChildElement !(hello "Electron"),
                       ChildElement !(hello "React"),
                       Text "... it's working :)"])
               !(getElement "root")
