@@ -1,0 +1,7 @@
+package react
+
+sourcedir = src
+modules = JS.React
+        , JS.React.DOM
+pkgs = contrib
+     , extras

@@ -1,0 +1,8 @@
+package example
+
+executable = example.js
+opts = "--codegen javascript"
+sourcedir = src
+main = example
+pkgs = contrib
+     , extras
