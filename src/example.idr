@@ -10,9 +10,7 @@ import Js.React.DOM
 
 
 hello : String -> JS_IO Js.React.Element
-hello = simple (cast . js "{who: %0}" (String -> JS_IO Ptr))
-               (js "%0.who" (Ptr -> JS_IO String) . cast)
-               (\who => div !(cast $ js "{style: {color: 'blue'}}" (JS_IO Ptr))
+hello = simple (\who => div !(cast $ js "{style: {color: 'blue'}}" (JS_IO Ptr))
                             [Text $ "Hello, " ++ who ++ "!"])
 
 main : JS_IO ()

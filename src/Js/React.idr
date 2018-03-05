@@ -50,12 +50,14 @@ tag : (Functor f, Foldable f) => (name : String) -> (props : Object) -> (childre
 tag name props children = pure $ MkElement !(jsElement (String -> Ptr -> Ptr -> JS_IO Ptr) name (cast props) !(childrenArray children))
 
 export
-simple : (toJs : a -> JS_IO Object) -> (fromJs : Object -> JS_IO a) -> (display : a -> JS_IO Element) -> (arg : a) -> JS_IO Element
-simple toJs fromJs display arg = assert_total inner
+simple : Member a => (display : a -> JS_IO Element) -> (arg : a) -> JS_IO Element
+simple display arg = assert_total inner
     where inner = pure $ MkElement !(js "React.createElement(%0, %1)"
                                         (JsFn (Ptr -> JS_IO Ptr) -> Ptr -> JS_IO Ptr)
-                                        (MkJsFn $ (fromJs >=> display) . MkObject >=> pure . cast)
-                                        (cast !(toJs arg)))
+                                        (MkJsFn $ (get "v" >=> display) . MkObject >=> pure . cast)
+                                        !(do o <- Js.Object.empty
+                                             set "v" arg o
+                                             pure $ cast o))
 
 export
 class' : (Functor f, Foldable f) => (ptr : Ptr) -> (props : Object) -> (children : f Child) -> JS_IO Element
