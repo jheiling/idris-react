@@ -1,10 +1,10 @@
-module JS.React
+module Js.React
 
 import Control.Monad.Syntax
-import JS
-import JS.Array
-import JS.Object
 import Data.Foldable.Extras
+import Js
+import Js.Array
+import Js.Object
 
 %default total
 
@@ -36,7 +36,7 @@ jsElement ty = js "React.createElement(%0, %1, ...%2)" ty
 
 childrenArray : (Functor f, Foldable f) => (children : f Child) -> JS_IO Ptr
 childrenArray children =
-    do array <- JS.Array.empty
+    do array <- Js.Array.empty
        iter (append array) children
        pure $ cast array
     where append : Array -> Child -> JS_IO ()

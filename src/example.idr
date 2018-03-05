@@ -1,15 +1,15 @@
-import JS
-import JS.Object
-import JS.DOM
-import JS.DOM.Document
-import JS.React
-import JS.React.DOM
+import Js
+import Js.Object
+import Js.DOM
+import Js.DOM.Document
+import Js.React
+import Js.React.DOM
 
 %default total
 
 
 
-hello : String -> JS_IO JS.React.Element
+hello : String -> JS_IO Js.React.Element
 hello = simple (cast . js "{who: %0}" (String -> JS_IO Ptr))
                (js "%0.who" (Ptr -> JS_IO String) . cast)
                (\who => div !(cast $ js "{style: {color: 'blue'}}" (JS_IO Ptr))
