@@ -9,5 +9,5 @@ import JS.React
 
 
 
-render : (element : JS.React.Element) -> (mount : JS.DOM.Element) -> JS_IO ()
-render element = js "ReactDOM.render(%0, %1)" (Ptr -> Ptr -> JS_IO ()) (cast element) . cast
+render : (mount : JS.DOM.Element) -> (element : JS.React.Element) -> JS_IO ()
+render mount = js "ReactDOM.render(%1, %0)" (Ptr -> Ptr -> JS_IO ()) (cast mount) . cast

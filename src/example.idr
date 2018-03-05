@@ -16,8 +16,9 @@ hello = simple (cast . js "{who: %0}" (String -> JS_IO Ptr))
                             [Text $ "Hello, " ++ who ++ "!"])
 
 main : JS_IO ()
-main = render !(div !empty
-                    [ChildElement !(hello "Idris"),
-                     ChildElement !(hello "React"),
-                     Text "... it's working :)"])
-              !(getElement "root")
+main = render !(getElement "root")
+              !(div !empty
+                    [ ChildElement !(hello "Idris")
+                    , ChildElement !(hello "React")
+                    , Text "... it's working :)"
+                    ])

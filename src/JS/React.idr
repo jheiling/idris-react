@@ -46,7 +46,7 @@ childrenArray children =
 
 
 export
-tag : Functor f => Foldable f => (name : String) -> (props : Object) -> (children : f Child) -> JS_IO Element
+tag : (Functor f, Foldable f) => (name : String) -> (props : Object) -> (children : f Child) -> JS_IO Element
 tag name props children = pure $ MkElement !(jsElement (String -> Ptr -> Ptr -> JS_IO Ptr) name (cast props) !(childrenArray children))
 
 export
@@ -58,11 +58,15 @@ simple toJs fromJs display arg = assert_total inner
                                         (cast !(toJs arg)))
 
 export
-class' : Functor f => Foldable f => (ptr : Ptr) -> (props : Object) -> (children : f Child) -> JS_IO Element
+class' : (Functor f, Foldable f) => (ptr : Ptr) -> (props : Object) -> (children : f Child) -> JS_IO Element
 class' ptr props children = pure $ MkElement !(jsElement (Ptr -> Ptr -> Ptr -> JS_IO Ptr) ptr (cast props) !(childrenArray children))
 
 
 
 export
-div : Functor f => Foldable f => (props : Object) -> (children : f Child) -> JS_IO Element
+div : (Functor f, Foldable f) => (props : Object) -> (children : f Child) -> JS_IO Element
 div = tag "div"
+
+export
+button : (Functor f, Foldable f) => (props : Object) -> (children : f Child) -> JS_IO Element
+button = tag "button"
