@@ -5,3 +5,4 @@ modules = Js.React
         , Js.React.DOM
 pkgs = contrib
      , extras
+     , js

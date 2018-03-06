@@ -6,3 +6,4 @@ sourcedir = src
 main = example
 pkgs = contrib
      , extras
+     , js
