@@ -38,13 +38,10 @@ Cast (JS_IO Element) (JS_IO Ptr) where
 
 private
 childrenArray : Foldable f => (children : f Child) -> JS_IO Ptr
-childrenArray children =
-    do array <- Js.Array.empty
-       iter (append' array) children
-       pure $ cast array
-    where append' : Array -> Child -> JS_IO ()
-          append' array (ChildElement (MkElement ptr)) = append ptr array
-          append' array (Text t) = append t array
+childrenArray = cast . createWith appendChild
+    where appendChild : Child -> Array -> JS_IO ()
+          appendChild (ChildElement (MkElement ptr)) = append ptr
+          appendChild (Text t) = append t
 
 %inline
 private
