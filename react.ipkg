@@ -1,7 +1,7 @@
 package react
 
 sourcedir = src
-modules = Js.React
+modules = Js.React.Element
         , Js.React.DOM
 pkgs = contrib
      , extras

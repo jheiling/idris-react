@@ -1,4 +1,4 @@
-module Js.React
+module Js.React.Element
 
 import Control.Monad.Syntax
 import Data.Foldable.Extras
