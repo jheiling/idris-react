@@ -14,6 +14,9 @@ import Js.Object
 public export
 data Element = MkElement Ptr
 
+Class Element where
+    ptr (MkElement p) = p
+
 public export
 data Child = ChildElement Element
            | Text String
@@ -25,22 +28,11 @@ data Component = Tag String
 
 
 
-Cast Element Ptr where
-    cast (MkElement ptr) = ptr
-
-Cast (JS_IO Ptr) (JS_IO Element) where
-    cast x = pure $ MkElement !x
-
-Cast (JS_IO Element) (JS_IO Ptr) where
-    cast x = pure $ cast !x
-
-
-
 private
-childrenArray : Foldable f => (children : f Child) -> JS_IO Ptr
-childrenArray = cast . createWith appendChild
+childrenArray : Foldable f => f Child -> JS_IO Ptr
+childrenArray = createWith appendChild >=> pure . ptr
     where appendChild : Child -> Array -> JS_IO ()
-          appendChild (ChildElement (MkElement ptr)) = append ptr
+          appendChild (ChildElement (MkElement p)) = append p
           appendChild (Text t) = append t
 
 %inline
@@ -49,17 +41,17 @@ jsElement : (ty : Type) -> {auto fty : FTy FFI_JS [] ty} -> ty
 jsElement ty = js "React.createElement(%0, %1, ...%2)" ty
 
 tag : Foldable f => (name : String) -> (props : Object) -> (children : f Child) -> JS_IO Element
-tag name props children = cast $ jsElement (String -> Ptr -> Ptr -> JS_IO Ptr) name (cast props) !(childrenArray children)
+tag name props = childrenArray >=> jsElement (String -> Ptr -> Ptr -> JS_IO Ptr) name (ptr props) >=> pure . MkElement
 
 simple : Member a => (display : a -> JS_IO Element) -> (arg : a) -> JS_IO Element
 simple display arg = assert_total inner
-    where inner = cast $ js "React.createElement(%0, %1)"
-                            (JsFn (Ptr -> JS_IO Ptr) -> Ptr -> JS_IO Ptr)
-                            (MkJsFn $ get "v" . MkObject >=> cast . display)
-                            (cast !(wrap "v" arg))
+    where inner = MkElement <$> js "React.createElement(%0, %1)"
+                                   (JsFn (Ptr -> JS_IO Ptr) -> Ptr -> JS_IO Ptr)
+                                   (MkJsFn $ get "v" . MkObject >=> (display >=> pure . ptr))
+                                   (ptr !(wrap "v" arg))
 
-class' : Foldable f => (ptr : Ptr) -> (props : Object) -> (children : f Child) -> JS_IO Element
-class' ptr props children = cast $ jsElement (Ptr -> Ptr -> Ptr -> JS_IO Ptr) ptr (cast props) !(childrenArray children)
+class' : Foldable f => (p : Ptr) -> (props : Object) -> (children : f Child) -> JS_IO Element
+class' p props = childrenArray >=> jsElement (Ptr -> Ptr -> Ptr -> JS_IO Ptr) p (ptr props) >=> pure . MkElement
 
 
 
