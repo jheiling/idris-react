@@ -9,6 +9,19 @@ import Js.React.Element
 
 
 
+helloInitState : String -> String
+helloInitState = id
+
+helloRender : String -> JS_IO Js.React.Element.Element
+helloRender who = div !(wrap "color" "red" >>= wrap "style")
+                      [Text $ "Hello, " ++ who ++ "!"]
+
+helloInfo : ComponentInfo String String
+helloInfo = MkComponentInfo helloInitState helloRender
+
+helloClass : JS_IO Js.React.Element.Element
+helloClass = fromComponent' !(component helloInfo) "Class"
+
 hello : String -> JS_IO Js.React.Element.Element
 hello = simple (\who => div !(wrap "color" "blue" >>= wrap "style")
                             [Text $ "Hello, " ++ who ++ "!"])
@@ -16,7 +29,8 @@ hello = simple (\who => div !(wrap "color" "blue" >>= wrap "style")
 main : JS_IO ()
 main = render !(getElement "root")
               !(div !empty
-                    [ ChildElement !(hello "Idris")
-                    , ChildElement !(hello "React")
+                    [ Elem !(hello "Idris")
+                    , Elem !(hello "React")
+                    , Elem !helloClass
                     , Text "... it's working :)"
                     ])
