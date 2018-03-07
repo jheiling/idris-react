@@ -30,28 +30,32 @@ childrenArray = createWith appendChild >=> pure . ptr
           appendChild (ChildElement (MkElement p)) = append p
           appendChild (Text t) = append t
 
-%inline
 private
+%inline
 jsElement : (ty : Type) -> {auto fty : FTy FFI_JS [] ty} -> ty
 jsElement ty = js "React.createElement(%0, %1, ...%2)" ty
 
+%inline
 tag : (Class p, Foldable f) => (name : String) -> (props : p) -> (children : f Child) -> JS_IO Element
 tag name props = childrenArray >=> jsElement (String -> Ptr -> Ptr -> JS_IO Ptr) name (ptr props) >=> pure . MkElement
 
+%inline
 simple : Member a => (display : a -> JS_IO Element) -> (arg : a) -> JS_IO Element
-simple display arg = assert_total inner
-    where inner = MkElement <$> js "React.createElement(%0, %1)"
-                                   (JsFn (Ptr -> JS_IO Ptr) -> Ptr -> JS_IO Ptr)
-                                   (MkJsFn $ get "v" . MkObject >=> (display >=> pure . ptr))
-                                   (ptr !(wrap "v" arg))
+simple display arg = assert_total (MkElement <$> js "React.createElement(%0, %1)"
+                                                 (JsFn (Ptr -> JS_IO Ptr) -> Ptr -> JS_IO Ptr)
+                                                 (MkJsFn $ get "v" . MkObject >=> (display >=> pure . ptr))
+                                                 (ptr !(wrap "v" arg)))
 
+%inline
 class' : (Class c, Class p, Foldable f) => (cl : c) -> (props : p) -> (children : f Child) -> JS_IO Element
 class' cl props = childrenArray >=> jsElement (Ptr -> Ptr -> Ptr -> JS_IO Ptr) (ptr cl) (ptr props) >=> pure . MkElement
 
 
 
+%inline
 div : (Class p, Foldable f) => (props : p) -> (children : f Child) -> JS_IO Element
 div = tag "div"
 
+%inline
 button : (Class p, Foldable f) => (props : p) -> (children : f Child) -> JS_IO Element
 button = tag "button"

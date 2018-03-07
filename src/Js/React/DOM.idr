@@ -10,5 +10,6 @@ import Js.React.Element
 
 
 export
+%inline
 render : (mount : Js.DOM.Element.Element) -> (element : Js.React.Element.Element) -> JS_IO ()
 render mount = js "ReactDOM.render(%1, %0)" (Ptr -> Ptr -> JS_IO ()) (ptr mount) . ptr
